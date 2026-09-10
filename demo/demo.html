@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Compose Calendar demo</title>
+<style>
+  html,body{margin:0;background:#3a3a42;}
+  #stage{width:1280px;height:720px;display:block;margin:0 auto;}
+</style>
+</head>
+<body>
+<canvas id="stage" width="1280" height="720"></canvas>
+<script>
+"use strict";
+const W = 1280, H = 720, FPS = 30, DUR = 27; // seconds
+const cv = document.getElementById("stage");
+const g = cv.getContext("2d");
+
+// ---- palette
+const BLUE = "#0060df", GREEN = "#2ac3a2", INK = "#15141a", MUT = "#5b5b66";
+const PAGE = "#f4f4f6", CARD = "#ffffff", LINE = "#e2e2e8", FIELD = "#ffffff";
+
+function rr(x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath();}
+function clamp(a,b,t){return Math.max(0,Math.min(1,(t-a)/(b-a)));}
+function ease(t){return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;}
+function lerp(a,b,t){return a+(b-a)*t;}
+
+// captions: [start,end,text]
+const CAPS = [
+  [0.4,4.2,"Writing to the whole fundraising team"],
+  [4.6,9.6,"One button fills in everyone from the thread"],
+  [9.8,14.2,"Type the time the way you would say it"],
+  [14.4,18.6,"Send. Google Meet link added automatically"],
+  [18.8,24.4,"Or drop your free slots in their time zone"],
+];
+
+const ATTENDEES = ["anna.weber@dequra.eu","ben.klein@nexabiome.com","carla.dias@technophage.pt"];
+
+// cursor keyframes [t,x,y]
+const CURSOR = [
+  [0,1180,300],[3.2,1180,300],[4.0,1148,150], // move to Calendar button
+  [4.6,980,300],[9.0,1035,300],               // into popup, to When field
+  [13.6,1035,300],[14.2,1150,505],            // to Send button
+  [18.2,1150,505],[18.8,905,150],             // to Availability tab
+  [22.6,905,150],[23.2,1150,505],             // to Insert button
+  [24.4,1150,505],
+];
+function cursorAt(t){
+  let a=CURSOR[0];
+  for(let i=1;i<CURSOR.length;i++){const b=CURSOR[i];if(t<=b[0]){const k=ease(clamp(a[0],b[0],t));return[lerp(a[1],b[1],k),lerp(a[2],b[2],k)];}a=b;}
+  return[a[1],a[2]];
+}
+
+function drawCompose(t){
+  // window
+  g.fillStyle="#ffffff";g.fillRect(40,60,820,600);
+  g.fillStyle="#f0f0f3";g.fillRect(40,60,820,64);
+  g.fillStyle=INK;g.font="600 15px Segoe UI, system-ui";g.textBaseline="middle";
+  g.fillText("Write: In Pursuit of a Cure: planning call",60,92);
+  // toolbar
+  g.fillStyle="#fafafb";g.fillRect(40,124,820,44);
+  g.strokeStyle=LINE;g.beginPath();g.moveTo(40,168);g.lineTo(860,168);g.stroke();
+  const tools=["Send","Spelling","Save","Attach","Contacts"];let tx=64;
+  g.font="13px Segoe UI, system-ui";g.fillStyle=MUT;
+  for(const it of tools){g.fillText(it,tx,146);tx+=g.measureText(it).width+26;}
+  // Calendar button (highlight when hovered)
+  const hov = t>3.6 && t<5.2;
+  g.fillStyle = hov ? "#e7f0ff" : "#fafafb";
+  rr(1040,130,120,30,5);g.fill();
+  g.strokeStyle = hov?BLUE:LINE;g.lineWidth=1;rr(1040,130,120,30,5);g.stroke();
+  // little calendar glyph
+  g.fillStyle=BLUE;rr(1052,138,14,14,3);g.fill();g.fillStyle="#fff";g.fillRect(1055,143,8,2);
+  g.fillStyle=INK;g.font="13px Segoe UI, system-ui";g.fillText("Calendar",1074,146);
+  // fields
+  g.fillStyle=MUT;g.font="13px Segoe UI, system-ui";
+  g.fillText("To",60,196);g.fillText("Subject",60,226);
+  g.fillStyle="#111";
+  g.fillText(ATTENDEES.join(", "),120,196);
+  g.fillText("In Pursuit of a Cure: planning call",120,226);
+  // body + signature
+  g.fillStyle=INK;g.font="14px Segoe UI, system-ui";
+  let by=300;
+  const body=["Hi all,","","great to get this moving. A few times that could work on my side:"];
+  for(const l of body){g.fillText(l,60,by);by+=24;}
+  // inserted slots (scene 5)
+  const ins=clamp(23.2,24.2,t);
+  if(ins>0){
+    g.globalAlpha=ins;g.fillStyle="#0a3d91";g.font="14px Segoe UI, system-ui";
+    let iy=396;
+    for(const l of SLOTS_EN){g.fillText(l,60,iy);iy+=22;}
+    g.globalAlpha=1;
+  }
+  g.fillStyle=MUT;g.font="14px Segoe UI, system-ui";
+  g.fillText("- Patrick",60,560);
+}
+
+// Truthful slot text (as the add-on would render for PT)
+const SLOTS_EN=[
+  "The following times would work for me (all times Pacific Time (PDT)):",
+  "Tue, Sep 15: 1:00–4:30 AM, 6:00–8:30 AM",
+  "Wed, Sep 16: 1:00–8:30 AM",
+  "Thu, Sep 17: 1:00–4:00 AM, 5:30–8:30 AM",
+];
+
+function popup(t){
+  const open=clamp(3.9,4.6,t);
+  if(open<=0)return;
+  const x=880,y=120,w=360;
+  const h=lerp(120,470,ease(open));
+  g.globalAlpha=open;
+  g.shadowColor="rgba(0,0,0,.28)";g.shadowBlur=24;g.shadowOffsetY=8;
+  g.fillStyle=PAGE;rr(x,y,w,h,10);g.fill();
+  g.shadowColor="transparent";g.shadowBlur=0;g.shadowOffsetY=0;
+  if(open<1){g.globalAlpha=1;return;}
+  g.globalAlpha=1;
+  // clip to panel
+  g.save();rr(x,y,w,h,10);g.clip();
+  const availView = t>=18.8;
+  // tabs
+  g.fillStyle=MUT;g.font="13px Segoe UI, system-ui";
+  const t1=!availView, t2=availView;
+  g.fillStyle=t1?BLUE:MUT;g.fillText("Invitation",x+40,y+24);
+  g.fillStyle=t2?BLUE:MUT;g.fillText("Availability",x+180,y+24);
+  g.strokeStyle=LINE;g.beginPath();g.moveTo(x,y+42);g.lineTo(x+w,y+42);g.stroke();
+  g.strokeStyle=BLUE;g.lineWidth=2;g.beginPath();
+  if(t1){g.moveTo(x+34,y+41);g.lineTo(x+112,y+41);}else{g.moveTo(x+174,y+41);g.lineTo(x+264,y+41);}
+  g.stroke();g.lineWidth=1;
+
+  if(!availView){
+    let fy=y+64;
+    label("Title",x+20,fy);field(x+92,fy-14,x+w-20-(x+92),"Planning call",t);fy+=40;
+    label("Attendees",x+20,fy);
+    // attendees fill in one by one 4.8..8.6
+    const shown=ATTENDEES.filter((a,i)=>t>4.8+i*1.1);
+    field(x+92,fy-14,x+w-20-(x+92),shown.join(", ")||"",t,true);fy+=52;
+    // thread hint
+    if(t>8.4){g.fillStyle=GREEN;g.font="12px Segoe UI, system-ui";g.fillText("3 people from 5 messages in this thread",x+92,fy-4);}
+    fy+=16;
+    label("When",x+20,fy);
+    const typed = typeAt("Tue 15:00",9.4,10.8,t);
+    field(x+92,fy-14,150,typed,t,false,t>9.3&&t<11);
+    // duration pill
+    g.fillStyle=FIELD;g.strokeStyle=LINE;rr(x+250,fy-14,90,26,4);g.fill();g.stroke();
+    g.fillStyle=INK;g.font="12px Segoe UI, system-ui";g.fillText("30 min",x+258,fy-1);
+    fy+=34;
+    // parsed hint
+    if(t>10.8){g.fillStyle=GREEN;g.font="12px Segoe UI, system-ui";g.fillText("Tue 15.09.: 15:00–15:30 CEST",x+92,fy-6);}
+    fy+=26;
+    label("Calendar",x+20,fy);field(x+92,fy-14,x+w-20-(x+92),"patrick@gmail.com",t);fy+=40;
+    // meet checkbox
+    checkbox(x+20,fy-8,true);g.fillStyle=INK;g.font="12px Segoe UI, system-ui";g.fillText("With Google Meet",x+40,fy+3);fy+=44;
+    // send button
+    const sent=t>14.2;
+    g.fillStyle=BLUE;rr(x+w-150,y+h-44,130,30,5);g.fill();
+    g.fillStyle="#fff";g.font="13px Segoe UI, system-ui";g.textAlign="center";
+    g.fillText("Send invitation",x+w-85,y+h-28);g.textAlign="left";
+    if(sent){g.fillStyle=GREEN;g.font="12px Segoe UI, system-ui";g.fillText("Invitation sent · Meet link added",x+20,y+h-28);}
+  } else {
+    // availability view
+    let fy=y+64;
+    label("Language",x+20,fy);
+    seg(x+110,fy-14,["DE","EN"],1);fy+=40;
+    label("Zone",x+20,fy);
+    seg(x+110,fy-14,["CET","ET","PT"],2);fy+=44;
+    // preview box with slots
+    g.fillStyle=FIELD;g.strokeStyle=LINE;rr(x+20,fy-14,w-40,150,4);g.fill();g.stroke();
+    g.fillStyle=INK;g.font="12px Segoe UI, system-ui";
+    let sy=fy+6;
+    const nShown=Math.floor(clamp(19.8,22.2,t)*SLOTS_EN.length+0.001);
+    for(let i=0;i<SLOTS_EN.length;i++){if(i>nShown)break;
+      wrapText(SLOTS_EN[i],x+30,sy,w-60,16);sy+= (i===0?32:18);}
+    fy+=150+16;
+    const ins=t>23.2;
+    g.fillStyle=BLUE;rr(x+w-110,y+h-44,90,30,5);g.fill();
+    g.fillStyle="#fff";g.font="13px Segoe UI, system-ui";g.textAlign="center";
+    g.fillText("Insert",x+w-65,y+h-28);g.textAlign="left";
+    if(ins){g.fillStyle=GREEN;g.font="12px Segoe UI, system-ui";g.fillText("Inserted into the email",x+20,y+h-28);}
+  }
+  g.restore();
+}
+function label(s,x,y){g.fillStyle=MUT;g.font="12px Segoe UI, system-ui";g.fillText(s,x,y);}
+function field(x,y,w,val,t,multi,active){
+  g.fillStyle=FIELD;g.strokeStyle=active?BLUE:LINE;g.lineWidth=active?2:1;
+  rr(x,y,w,multi?42:26,4);g.fill();g.stroke();g.lineWidth=1;
+  g.fillStyle=INK;g.font="12px Segoe UI, system-ui";
+  if(multi){wrapText(val,x+8,y+14,w-16,15);}else{g.fillText(val,x+8,y+ (13),undefined);g.textBaseline="middle";g.fillText(val,x+8,y+13);}
+  g.textBaseline="middle";
+}
+function checkbox(x,y,on){g.strokeStyle=on?BLUE:LINE;g.fillStyle=on?BLUE:"#fff";rr(x,y,16,16,3);g.fill();if(on){g.strokeStyle="#fff";g.lineWidth=2;g.beginPath();g.moveTo(x+3,y+8);g.lineTo(x+7,y+12);g.lineTo(x+13,y+4);g.stroke();g.lineWidth=1;}}
+function seg(x,y,items,active){let w=48;for(let i=0;i<items.length;i++){const on=i===active;g.fillStyle=on?BLUE:"#fff";g.strokeStyle=LINE;rr(x+i*w,y,w,26,i===0?4:0);g.fill();g.stroke();g.fillStyle=on?"#fff":INK;g.font="12px Segoe UI, system-ui";g.textAlign="center";g.fillText(items[i],x+i*w+w/2,y+13);g.textAlign="left";}}
+function typeAt(str,a,b,t){if(t<a)return"";if(t>=b)return str;const n=Math.floor((t-a)/(b-a)*str.length);return str.slice(0,n)+((Math.floor(t*2)%2)?"|":"");}
+function wrapText(text,x,y,maxW,lh){const words=text.split(" ");let line="",yy=y;for(const w of words){const test=line+w+" ";if(g.measureText(test).width>maxW&&line){g.fillText(line,x,yy);line=w+" ";yy+=lh;}else line=test;}g.fillText(line,x,yy);}
+
+function caption(t){
+  let txt="";for(const c of CAPS){if(t>=c[0]&&t<c[1])txt=c[2];}
+  if(!txt)return;
+  g.font="600 22px Segoe UI, system-ui";
+  const w=g.measureText(txt).width+40;
+  g.fillStyle="rgba(20,20,26,.82)";rr(W/2-w/2,650,w,44,22);g.fill();
+  g.fillStyle="#fff";g.textAlign="center";g.fillText(txt,W/2,673);g.textAlign="left";
+}
+function cursor(t){const[x,y]=cursorAt(t);g.fillStyle="rgba(0,0,0,.28)";g.beginPath();g.moveTo(x+1,y+1);g.lineTo(x+1,y+19);g.lineTo(x+6,y+14);g.lineTo(x+10,y+22);g.lineTo(x+13,y+21);g.lineTo(x+9,y+13);g.lineTo(x+15,y+13);g.closePath();g.fill();g.fillStyle="#fff";g.strokeStyle="#111";g.lineWidth=1;g.beginPath();g.moveTo(x,y);g.lineTo(x,y+18);g.lineTo(x+5,y+13);g.lineTo(x+9,y+21);g.lineTo(x+12,y+20);g.lineTo(x+8,y+12);g.lineTo(x+14,y+12);g.closePath();g.fill();g.stroke();
+  // click ripple near clicks
+  for(const ct of [4.0,14.2,18.8,23.4]){const d=t-ct;if(d>0&&d<0.4){g.strokeStyle="rgba(0,96,223,"+(1-d/0.4)+")";g.lineWidth=2;g.beginPath();g.arc(x,y,4+d*40,0,7);g.stroke();}}g.lineWidth=1;}
+
+function endCard(t){
+  const a=clamp(24.6,25.4,t);if(a<=0)return;
+  g.globalAlpha=a;g.fillStyle="#0b1220";g.fillRect(0,0,W,H);
+  g.fillStyle="#fff";g.textAlign="center";
+  g.font="700 46px Segoe UI, system-ui";g.fillText("Compose Calendar",W/2,250);
+  g.fillStyle="#9db6ff";g.font="24px Segoe UI, system-ui";
+  g.fillText("Free & open source for Thunderbird",W/2,300);
+  g.fillStyle="#cfd6e6";g.font="20px Segoe UI, system-ui";
+  g.fillText("github.com/smisery-prrivate/compose-calendar",W/2,370);
+  g.fillStyle=GREEN;g.font="18px Segoe UI, system-ui";
+  g.fillText("If it saves you time, fund a cure at ifopa.org",W/2,430);
+  g.textAlign="left";g.globalAlpha=1;
+}
+
+function frame(t){
+  g.fillStyle="#3a3a42";g.fillRect(0,0,W,H);
+  drawCompose(t);
+  popup(t);
+  caption(t);
+  cursor(t);
+  endCard(t);
+}
+
+// ---------- record ----------
+let rec, chunks=[];
+window.__done=false;
+function startRecording(){
+  const stream=cv.captureStream(FPS);
+  const mime = MediaRecorder.isTypeSupported("video/webm;codecs=vp9")?"video/webm;codecs=vp9":"video/webm";
+  rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:1_200_000});
+  rec.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
+  rec.onstop=async()=>{
+    const blob=new Blob(chunks,{type:"video/webm"});
+    const buf=await blob.arrayBuffer();
+    const bytes=new Uint8Array(buf);
+    let bin="";for(let i=0;i<bytes.length;i++)bin+=String.fromCharCode(bytes[i]);
+    window.__b64=btoa(bin);
+    window.__len=window.__b64.length;
+    window.__done=true;
+  };
+  rec.start();
+  const t0=performance.now();
+  (function loop(){
+    const t=(performance.now()-t0)/1000;
+    frame(Math.min(t,DUR));
+    if(t<DUR)requestAnimationFrame(loop);else rec.stop();
+  })();
+}
+window.__getChunk=(i,size)=>window.__b64.slice(i*size,(i+1)*size);
+window.startRecording=startRecording;
+frame(0);
+</script>
+</body>
+</html>

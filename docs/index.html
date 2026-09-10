@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compose Calendar for Thunderbird</title>
+<meta property="og:title" content="Compose Calendar for Thunderbird">
+<meta property="og:description" content="Insert your free slots and send calendar invitations right from the Thunderbird compose window. Free and open source.">
+<style>
+  :root{--blue:#0060df;--green:#12a37f;--ink:#15141a;--mut:#5b5b66;--bg:#f6f7f9;--card:#fff;--line:#e4e6ec;}
+  @media (prefers-color-scheme:dark){:root{--ink:#f3f3f6;--mut:#b8bcc8;--bg:#14151a;--card:#1e2027;--line:#2c2f38;}}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;}
+  .wrap{max-width:760px;margin:0 auto;padding:48px 20px 80px;}
+  h1{font-size:34px;margin:0 0 6px;letter-spacing:-.5px;}
+  .sub{color:var(--mut);font-size:18px;margin:0 0 28px;}
+  .video{width:100%;border:1px solid var(--line);border-radius:12px;background:#000;display:block;margin:0 0 28px;}
+  .btn{display:inline-block;background:var(--blue);color:#fff;text-decoration:none;font-weight:600;font-size:17px;padding:14px 26px;border-radius:8px;border:0;cursor:pointer;}
+  .btn.ghost{background:transparent;color:var(--blue);border:1px solid var(--blue);}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:10px;}
+  .hint{color:var(--mut);font-size:14px;margin:6px 0 30px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin:22px 0;}
+  .feat{margin:0;padding-left:20px;}
+  .feat li{margin:8px 0;}
+  a{color:var(--blue);}
+  .donate{border-color:var(--green);}
+  .donate h2{margin:0 0 8px;font-size:20px;}
+  .donate .btn{background:var(--green);}
+  code{background:rgba(127,127,127,.15);padding:1px 6px;border-radius:4px;font-size:.92em;}
+  footer{color:var(--mut);font-size:13px;margin-top:40px;}
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:20px;}
+  .modal.on{display:flex;}
+  .modal .box{background:var(--card);border-radius:14px;max-width:440px;padding:28px;text-align:center;}
+  .modal h2{margin:0 0 10px;}
+  .modal p{color:var(--mut);margin:0 0 20px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Compose Calendar</h1>
+  <p class="sub">Free slots and calendar invitations, right in the Thunderbird compose window.</p>
+
+  <video class="video" src="compose-calendar-demo.mp4" autoplay muted loop playsinline poster="compose-calendar-demo-poster.jpg"></video>
+
+  <div class="row">
+    <a class="btn" id="download" href="https://github.com/smisery-prrivate/compose-calendar/releases/latest/download/compose-calendar-1.0.0.xpi">Download the add-on</a>
+    <a class="btn ghost" href="https://github.com/smisery-prrivate/compose-calendar">View on GitHub</a>
+  </div>
+  <p class="hint">Thunderbird 115+. After downloading: Add-ons Manager &rarr; gear icon &rarr; <em>Install Add-on From File</em>.</p>
+
+  <div class="card">
+    <ul class="feat">
+      <li><strong>Availability.</strong> Your free slots from every calendar, in the recipient's time zone, inserted at the cursor.</li>
+      <li><strong>Invitation.</strong> Attendees prefilled from the whole thread; type the time like you'd say it; a Google Meet link is added.</li>
+      <li><strong>Private.</strong> Runs entirely inside Thunderbird. No accounts, no tracking, nothing leaves your machine.</li>
+    </ul>
+  </div>
+
+  <div class="card donate" id="donate">
+    <h2>This one's free. Help cure a disease with it.</h2>
+    <p>FOP (fibrodysplasia ossificans progressiva) is an ultra-rare disease that slowly turns muscle into bone. It's personal to my family. If this add-on saves you time, please put a few euros toward FOP research.</p>
+    <a class="btn" href="https://ifopa.salsalabs.org/2026InPursuitofaCureWebsite/index.html" target="_blank" rel="noopener">Donate to FOP research (IFOPA)</a>
+  </div>
+
+  <footer>
+    Built by Patrick Grossmann. MIT licensed. Source and issues on
+    <a href="https://github.com/smisery-prrivate/compose-calendar">GitHub</a>.
+  </footer>
+</div>
+
+<!-- After the download starts, invite the reader to donate -->
+<div class="modal" id="thanks">
+  <div class="box">
+    <h2>Thanks for the download 🎉</h2>
+    <p>Compose Calendar is free. If it earns you back an hour, would you put a few euros toward FOP research? It's personal to my family.</p>
+    <a class="btn" style="background:var(--green)" href="https://ifopa.salsalabs.org/2026InPursuitofaCureWebsite/index.html" target="_blank" rel="noopener">Donate to IFOPA</a>
+    <p style="margin-top:16px"><a href="#" id="closeThanks">No thanks, maybe later</a></p>
+  </div>
+</div>
+
+<script>
+  var dl = document.getElementById("download");
+  var modal = document.getElementById("thanks");
+  dl.addEventListener("click", function(){
+    // let the download begin, then show the donation ask
+    setTimeout(function(){ modal.classList.add("on"); }, 1200);
+  });
+  document.getElementById("closeThanks").addEventListener("click", function(e){
+    e.preventDefault(); modal.classList.remove("on");
+  });
+  modal.addEventListener("click", function(e){ if(e.target===modal) modal.classList.remove("on"); });
+</script>
+</body>
+</html>
