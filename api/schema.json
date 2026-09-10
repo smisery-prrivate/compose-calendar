@@ -1,0 +1,43 @@
+[
+  {
+    "namespace": "composeCalendar",
+    "description": "Read Thunderbird calendars and create invitations for the compose-window popup",
+    "functions": [
+      {
+        "name": "getBusyEvents",
+        "type": "function",
+        "async": true,
+        "description": "Calendars and events in a date range with the fields needed to compute free time",
+        "parameters": [
+          { "name": "startDate", "type": "string", "description": "ISO 8601 range start" },
+          { "name": "endDate", "type": "string", "description": "ISO 8601 range end" }
+        ]
+      },
+      {
+        "name": "getInviteCalendars",
+        "type": "function",
+        "async": true,
+        "description": "Enabled, writable calendars that can host an invitation",
+        "parameters": []
+      },
+      {
+        "name": "createInvite",
+        "type": "function",
+        "async": true,
+        "description": "Create an event with attendees in a calendar, or open Thunderbird's event dialog prefilled",
+        "parameters": [
+          { "name": "params", "type": "object", "additionalProperties": true, "description": "calendarId, title, start, end (ISO), location, description, attendees [{email,name}], organizerEmail, organizerName, openDialog" }
+        ]
+      },
+      {
+        "name": "getThreadParticipants",
+        "type": "function",
+        "async": true,
+        "description": "Everyone who took part in a message thread (authors and recipients, minus the user's identities)",
+        "parameters": [
+          { "name": "params", "type": "object", "additionalProperties": true, "description": "headerMessageId, optional accountId + path of the folder" }
+        ]
+      }
+    ]
+  }
+]

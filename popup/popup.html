@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Compose Calendar</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 12px;
+      width: 440px;
+      background: #f9f9fa;
+      color: #15141a;
+      font-size: 13px;
+    }
+    @media (prefers-color-scheme: dark) {
+      body { background: #2b2a33; color: #fbfbfe; }
+      select, input, textarea, .seg, .seg button, .buttons button, button.small { background: #42414d !important; color: #fbfbfe !important; border-color: #5b5b66 !important; }
+      .seg button.active, .buttons button.primary { background: #0060df !important; color: #fff !important; }
+      .tabs { border-bottom-color: #5b5b66; }
+      .hint, .status, summary, .row label { color: #cfcfd8; }
+    }
+    .tabs { display: flex; margin-bottom: 12px; border-bottom: 1px solid #cfcfd8; }
+    .tabs button {
+      flex: 1; padding: 6px 0; font-size: 13px; border: 0; border-bottom: 2px solid transparent;
+      background: transparent; color: #5b5b66; cursor: pointer;
+    }
+    .tabs button.active { color: #0060df; border-bottom-color: #0060df; font-weight: 600; }
+    .row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+    .row label { min-width: 68px; color: #5b5b66; }
+    select, input[type="text"], input[type="number"], textarea.small {
+      flex: 1; min-width: 0; padding: 4px 6px; font-size: 13px; border: 1px solid #cfcfd8;
+      border-radius: 4px; background: #fff; font-family: inherit;
+    }
+    textarea.small { height: 44px; resize: vertical; }
+    input[type="number"] { width: 60px; flex: 0; }
+    input.short { flex: 0; width: 54px; }
+    .seg { display: inline-flex; flex: 1; border: 1px solid #cfcfd8; border-radius: 4px; overflow: hidden; background: #fff; }
+    .seg button {
+      flex: 1; padding: 4px 0; font-size: 12px; border: 0; border-right: 1px solid #e0e0e6; border-radius: 0;
+      background: #fff; cursor: pointer; white-space: nowrap;
+    }
+    .seg button:last-child { border-right: 0; }
+    .seg button.active { background: #0060df; color: #fff; }
+    .check { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+    .calendars { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-bottom: 8px; }
+    .calendars label { display: flex; align-items: center; gap: 4px; }
+    .swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+    textarea#preview {
+      width: 100%; box-sizing: border-box; height: 150px; font-family: inherit; font-size: 13px; padding: 6px;
+      border: 1px solid #cfcfd8; border-radius: 4px; resize: vertical; background: #fff;
+    }
+    .buttons { display: flex; gap: 8px; margin-top: 8px; justify-content: flex-end; flex-wrap: wrap; }
+    .buttons button, button.small {
+      padding: 6px 14px; font-size: 13px; border: 1px solid #cfcfd8; border-radius: 4px; background: #fff; cursor: pointer;
+    }
+    button.small { padding: 4px 8px; font-size: 12px; white-space: nowrap; }
+    .buttons button.primary { background: #0060df; color: #fff; border-color: #0060df; }
+    .buttons button:disabled { opacity: 0.5; cursor: default; }
+    details { margin-top: 8px; }
+    summary { color: #5b5b66; cursor: pointer; margin-bottom: 6px; }
+    .status { color: #5b5b66; min-height: 16px; margin-top: 6px; }
+    .status.error { color: #e22850; }
+    .status.ok { color: #2ac3a2; }
+    .hint { color: #5b5b66; font-size: 12px; margin: -4px 0 8px 76px; }
+    .hint.error { color: #e22850; }
+    .hint.ok { color: #2ac3a2; }
+  </style>
+</head>
+<body>
+  <div class="tabs">
+    <button type="button" data-tab="invite" data-i18n="tabInvite"></button>
+    <button type="button" data-tab="avail" data-i18n="tabAvailability"></button>
+  </div>
+
+  <!-- ================= Invitation ================= -->
+  <div id="tab-invite" hidden>
+    <div class="row">
+      <label for="ivTitle" data-i18n="labelTitle"></label>
+      <input type="text" id="ivTitle">
+    </div>
+    <div class="row">
+      <label for="ivAttendees" data-i18n="labelAttendees"></label>
+      <textarea class="small" id="ivAttendees" data-i18n-placeholder="attendeesPlaceholder"></textarea>
+    </div>
+    <div class="hint" id="ivAttendeeHint"></div>
+    <div class="row">
+      <label for="ivWhen" data-i18n="labelWhen"></label>
+      <input type="text" id="ivWhen" data-i18n-placeholder="whenPlaceholder">
+      <select id="ivDuration">
+        <option value="15" data-i18n-min="15"></option>
+        <option value="30" data-i18n-min="30"></option>
+        <option value="45" data-i18n-min="45"></option>
+        <option value="60" data-i18n-min="60"></option>
+        <option value="90" data-i18n-min="90"></option>
+      </select>
+    </div>
+    <div class="hint" id="ivWhenHint"></div>
+    <div class="row">
+      <label for="ivSlot" data-i18n="labelFreeSlot"></label>
+      <select id="ivSlot"><option value="" data-i18n="chooseSuggestion"></option></select>
+    </div>
+    <div class="row">
+      <label for="ivCalendar" data-i18n="labelCalendar"></label>
+      <select id="ivCalendar"></select>
+    </div>
+    <div class="hint" id="ivOrganizer"></div>
+    <div class="check">
+      <input type="checkbox" id="ivMeet" checked>
+      <label for="ivMeet" data-i18n="meetOption"></label>
+    </div>
+    <div class="row">
+      <label for="ivLocation" data-i18n="labelLocation"></label>
+      <input type="text" id="ivLocation" data-i18n-placeholder="locationPlaceholder">
+      <button type="button" id="ivMyLinkBtn" class="small" data-i18n="myLinkButton"></button>
+    </div>
+    <div class="row">
+      <label for="ivDescription" data-i18n="labelNote"></label>
+      <input type="text" id="ivDescription" data-i18n-placeholder="notePlaceholder">
+    </div>
+    <div class="check">
+      <input type="checkbox" id="ivAddMe">
+      <label for="ivAddMe" data-i18n="addMeOption"></label>
+    </div>
+    <div class="check">
+      <input type="checkbox" id="ivNote" checked>
+      <label for="ivNote" data-i18n="insertNoteOption"></label>
+    </div>
+    <div class="check">
+      <input type="checkbox" id="ivReview">
+      <label for="ivReview" data-i18n="reviewOption"></label>
+    </div>
+    <div class="status" id="ivStatus"></div>
+
+    <details>
+      <summary data-i18n="settings"></summary>
+      <div class="row">
+        <label for="ivMyLink" data-i18n="labelMyLink"></label>
+        <input type="text" id="ivMyLink" data-i18n-placeholder="myLinkPlaceholder">
+      </div>
+      <div class="row">
+        <label for="calendarUrl" data-i18n="labelCalendarUrl"></label>
+        <input type="text" id="calendarUrl" data-i18n-placeholder="calendarUrlPlaceholder">
+      </div>
+      <div class="check">
+        <input type="checkbox" id="autoCalendar">
+        <label for="autoCalendar" data-i18n="autoCalendarOption"></label>
+      </div>
+    </details>
+
+    <div class="buttons">
+      <button id="ivOpenCal" type="button" data-i18n="openCalendarButton"></button>
+      <button id="ivSend" type="button" class="primary" data-i18n="sendInviteButton"></button>
+    </div>
+  </div>
+
+  <!-- ================= Availability ================= -->
+  <div id="tab-avail" hidden>
+    <div class="row">
+      <label for="duration" data-i18n="labelDuration"></label>
+      <select id="duration">
+        <option value="30" data-i18n-minutes="30"></option>
+        <option value="45" data-i18n-minutes="45"></option>
+        <option value="60" data-i18n-minutes="60"></option>
+        <option value="90" data-i18n-minutes="90"></option>
+      </select>
+      <select id="range">
+        <option value="thisWeek" data-i18n="rangeThisWeek"></option>
+        <option value="next5" data-i18n="rangeNext7"></option>
+        <option value="nextWeek" data-i18n="rangeNextWeek"></option>
+        <option value="twoWeeks" data-i18n="rangeNext14"></option>
+      </select>
+    </div>
+    <div class="row">
+      <label data-i18n="labelLanguage"></label>
+      <div class="seg" id="lang">
+        <button type="button" data-value="de" data-i18n="langDe"></button>
+        <button type="button" data-value="en" data-i18n="langEn"></button>
+      </div>
+    </div>
+    <div class="row">
+      <label data-i18n="labelTimezone"></label>
+      <div class="seg" id="tz">
+        <button type="button" data-value="LOCAL" data-i18n="zoneLocal"></button>
+        <button type="button" data-value="CET">CET</button>
+        <button type="button" data-value="UK">UK</button>
+        <button type="button" data-value="ET">ET</button>
+        <button type="button" data-value="CT">CT</button>
+        <button type="button" data-value="PT">PT</button>
+        <button type="button" data-value="IST">IST</button>
+        <button type="button" data-value="SGT">SGT</button>
+        <button type="button" data-value="JST">JST</button>
+      </div>
+    </div>
+    <div class="check">
+      <input type="checkbox" id="alsoHome">
+      <label for="alsoHome" data-i18n="alsoHomeOption"></label>
+    </div>
+    <div class="check">
+      <input type="checkbox" id="inPerson">
+      <label for="inPerson" data-i18n="inPersonOption"></label>
+    </div>
+    <div class="check">
+      <input type="checkbox" id="intro" checked>
+      <label for="intro" data-i18n="introOption"></label>
+    </div>
+    <div class="calendars" id="calendars"></div>
+
+    <textarea id="preview" spellcheck="false"></textarea>
+    <div class="status" id="status"></div>
+
+    <details>
+      <summary data-i18n="settings"></summary>
+      <div class="row">
+        <label for="workStart" data-i18n="labelWorkHours"></label>
+        <input type="text" class="short" id="workStart" value="09:00">
+        <span data-i18n="until"></span>
+        <input type="text" class="short" id="workEnd" value="17:00">
+      </div>
+      <div class="row">
+        <label for="buffer" data-i18n="labelBuffer"></label>
+        <input type="number" id="buffer" value="15" min="0" step="5"> <span data-i18n="bufferOnsite"></span>
+        <input type="number" id="commute" value="60" min="0" step="5"> <span data-i18n="minUnit"></span>
+      </div>
+      <div class="row">
+        <label for="lead" data-i18n="labelLead"></label>
+        <input type="number" id="lead" value="60" min="0" step="15"> <span data-i18n="leadSuffix"></span>
+      </div>
+    </details>
+
+    <div class="buttons">
+      <button id="refresh" type="button" data-i18n="refreshButton"></button>
+      <button id="insert" type="button" class="primary" data-i18n="insertButton"></button>
+    </div>
+  </div>
+
+  <script src="i18n.js"></script>
+  <script src="slots.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
