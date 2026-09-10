@@ -1,88 +1,320 @@
 {
-  "extName": { "message": "Compose Calendar" },
-  "extDescription": { "message": "Free-slot lists and calendar invitations right in the compose window: paste your availability in the recipient's time zone, or send an invitation to everyone in the thread with one click." },
-  "buttonLabel": { "message": "Calendar" },
-  "buttonTitle": { "message": "Insert free slots or send a calendar invitation" },
-
-  "tabInvite": { "message": "Invitation" },
-  "tabAvailability": { "message": "Availability" },
-
-  "labelTitle": { "message": "Title" },
-  "labelAttendees": { "message": "Attendees" },
-  "attendeesPlaceholder": { "message": "name@company.com, …" },
-  "labelWhen": { "message": "When" },
-  "whenPlaceholder": { "message": "e.g. 14 Sep 15:00 · Tue 15:00 · tomorrow 10:30" },
-  "labelFreeSlot": { "message": "Free slot" },
-  "chooseSuggestion": { "message": "Take a suggestion from the calendar…" },
-  "labelCalendar": { "message": "Calendar" },
-  "meetOption": { "message": "With Google Meet (event is saved in the Google Calendar window)" },
-  "labelLocation": { "message": "Location" },
-  "locationPlaceholder": { "message": "video link or address (empty for Google Meet)" },
-  "myLinkButton": { "message": "My link" },
-  "labelNote": { "message": "Note" },
-  "notePlaceholder": { "message": "optional" },
-  "addMeOption": { "message": "Add me (sender address) as attendee" },
-  "insertNoteOption": { "message": "Insert a sentence about the invitation into the email" },
-  "reviewOption": { "message": "Review in Thunderbird's event dialog before saving" },
-  "settings": { "message": "Settings" },
-  "labelMyLink": { "message": "My link" },
-  "myLinkPlaceholder": { "message": "https://zoom.us/j/…" },
-  "autoCalendarOption": { "message": "Open the web calendar next to every new compose window" },
-  "labelCalendarUrl": { "message": "Web calendar" },
-  "calendarUrlPlaceholder": { "message": "https://calendar.google.com/calendar/u/0/r/day/{y}/{m}/{d}" },
-  "openCalendarButton": { "message": "Open calendar beside" },
-  "sendInviteButton": { "message": "Send invitation" },
-
-  "labelDuration": { "message": "Duration" },
-  "minutes": { "message": "$N$ minutes", "placeholders": { "N": { "content": "$1" } } },
-  "min": { "message": "$N$ min", "placeholders": { "N": { "content": "$1" } } },
-  "rangeThisWeek": { "message": "This week" },
-  "rangeNext7": { "message": "Next 7 days" },
-  "rangeNextWeek": { "message": "Next week" },
-  "rangeNext14": { "message": "Next 14 days" },
-  "labelLanguage": { "message": "Language" },
-  "langDe": { "message": "Deutsch" },
-  "langEn": { "message": "English" },
-  "labelTimezone": { "message": "Time zone" },
-  "zoneLocal": { "message": "Local" },
-  "alsoHomeOption": { "message": "Add my local times in brackets" },
-  "inPersonOption": { "message": "In-person meeting (travel buffer around all other events)" },
-  "introOption": { "message": "Insert an intro sentence" },
-  "labelWorkHours": { "message": "Hours" },
-  "until": { "message": "to" },
-  "labelBuffer": { "message": "Buffer" },
-  "bufferOnsite": { "message": "min, in person" },
-  "minUnit": { "message": "min" },
-  "labelLead": { "message": "Lead" },
-  "leadSuffix": { "message": "min from now" },
-  "refreshButton": { "message": "Refresh" },
-  "insertButton": { "message": "Insert" },
-
-  "statusLoading": { "message": "Loading calendar…" },
-  "statusFreeWindows": { "message": "$W$ free windows on $D$ days, $E$ events considered.", "placeholders": { "W": { "content": "$1" }, "D": { "content": "$2" }, "E": { "content": "$3" } } },
-  "statusInserting": { "message": "Inserting…" },
-  "statusCreating": { "message": "Creating event…" },
-  "errorPrefix": { "message": "Error: $MSG$", "placeholders": { "MSG": { "content": "$1" } } },
-  "errorInsert": { "message": "Could not insert: $MSG$", "placeholders": { "MSG": { "content": "$1" } } },
-  "errorNoCompose": { "message": "No compose window found" },
-  "errorNoAttendees": { "message": "No attendees" },
-  "errorNoCalendar": { "message": "No calendar selected" },
-  "errorNoTitle": { "message": "Title missing" },
-  "errorWhen": { "message": "Date and time not understood" },
-  "errorMyLink": { "message": "Enter your video link under Settings first." },
-  "errorTimeout": { "message": "$WHAT$ is not responding ($S$ s)", "placeholders": { "WHAT": { "content": "$1" }, "S": { "content": "$2" } } },
-  "whatCalendar": { "message": "Calendar" },
-  "whatCalendarList": { "message": "Calendar list" },
-  "freeSlotsNotLoaded": { "message": "Free slots not loaded: $MSG$", "placeholders": { "MSG": { "content": "$1" } } },
-  "whenNotUnderstood": { "message": "Time not understood. Examples: 14 Sep 15:00 · 14.9. 15:00 · Tue 15:00 · tomorrow 10:30 · 2026-09-14 15:00" },
-  "whenEmpty": { "message": "Enter a date and time, or take a suggestion below." },
-  "whenPast": { "message": "(in the past)" },
-  "threadInfo": { "message": "$P$ people from $M$ messages in this thread", "placeholders": { "P": { "content": "$1" }, "M": { "content": "$2" } } },
-  "hintGoogleSends": { "message": "Google creates the event as $ORG$ and sends the invitation.", "placeholders": { "ORG": { "content": "$1" } } },
-  "hintServerSends": { "message": "The calendar server sends the invitation as $ORG$.", "placeholders": { "ORG": { "content": "$1" } } },
-  "hintThunderbirdSends": { "message": "Thunderbird's event dialog opens; saving it sends the invitation from $ORG$.", "placeholders": { "ORG": { "content": "$1" } } },
-  "statusGoogleOpened": { "message": "Google Calendar opened: click \"Add Google Meet\" and Save there." },
-  "statusDialogOpened": { "message": "Event dialog opened." },
-  "statusCreated": { "message": "Invitation created in \"$CAL$\".", "placeholders": { "CAL": { "content": "$1" } } },
-  "defaultTitle": { "message": "Call" }
+  "extName": {
+    "message": "Compose Calendar"
+  },
+  "extDescription": {
+    "message": "Free-slot lists and calendar invitations right in the compose window: paste your availability in the recipient's time zone, or send an invitation to everyone in the thread with one click."
+  },
+  "buttonLabel": {
+    "message": "Calendar"
+  },
+  "buttonTitle": {
+    "message": "Insert free slots or send a calendar invitation"
+  },
+  "tabInvite": {
+    "message": "Invitation"
+  },
+  "tabAvailability": {
+    "message": "Availability"
+  },
+  "labelTitle": {
+    "message": "Title"
+  },
+  "labelAttendees": {
+    "message": "Attendees"
+  },
+  "attendeesPlaceholder": {
+    "message": "name@company.com, …"
+  },
+  "labelWhen": {
+    "message": "When"
+  },
+  "whenPlaceholder": {
+    "message": "e.g. 14 Sep 15:00 · Tue 15:00 · tomorrow 10:30"
+  },
+  "labelFreeSlot": {
+    "message": "Free slot"
+  },
+  "chooseSuggestion": {
+    "message": "Take a suggestion from the calendar…"
+  },
+  "labelCalendar": {
+    "message": "Calendar"
+  },
+  "meetOption": {
+    "message": "With Google Meet (event is saved in the Google Calendar window)"
+  },
+  "labelLocation": {
+    "message": "Location"
+  },
+  "locationPlaceholder": {
+    "message": "video link or address (empty for Google Meet)"
+  },
+  "myLinkButton": {
+    "message": "My link"
+  },
+  "labelNote": {
+    "message": "Note"
+  },
+  "notePlaceholder": {
+    "message": "optional"
+  },
+  "addMeOption": {
+    "message": "Add me (sender address) as attendee"
+  },
+  "insertNoteOption": {
+    "message": "Insert a sentence about the invitation into the email"
+  },
+  "reviewOption": {
+    "message": "Review in Thunderbird's event dialog before saving"
+  },
+  "settings": {
+    "message": "Settings"
+  },
+  "labelMyLink": {
+    "message": "My link"
+  },
+  "myLinkPlaceholder": {
+    "message": "https://zoom.us/j/…"
+  },
+  "autoCalendarOption": {
+    "message": "Open the web calendar next to every new compose window"
+  },
+  "labelCalendarUrl": {
+    "message": "Web calendar"
+  },
+  "calendarUrlPlaceholder": {
+    "message": "https://calendar.google.com/calendar/u/0/r/day/{y}/{m}/{d}"
+  },
+  "openCalendarButton": {
+    "message": "Open calendar beside"
+  },
+  "sendInviteButton": {
+    "message": "Send invitation"
+  },
+  "labelDuration": {
+    "message": "Duration"
+  },
+  "minutes": {
+    "message": "$N$ minutes",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "min": {
+    "message": "$N$ min",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "rangeThisWeek": {
+    "message": "This week"
+  },
+  "rangeNext7": {
+    "message": "Next 7 days"
+  },
+  "rangeNextWeek": {
+    "message": "Next week"
+  },
+  "rangeNext14": {
+    "message": "Next 14 days"
+  },
+  "labelLanguage": {
+    "message": "Language"
+  },
+  "langDe": {
+    "message": "Deutsch"
+  },
+  "langEn": {
+    "message": "English"
+  },
+  "labelTimezone": {
+    "message": "Time zone"
+  },
+  "zoneLocal": {
+    "message": "Local"
+  },
+  "alsoHomeOption": {
+    "message": "Add my local times in brackets"
+  },
+  "inPersonOption": {
+    "message": "In-person meeting (travel buffer around all other events)"
+  },
+  "introOption": {
+    "message": "Insert an intro sentence"
+  },
+  "labelWorkHours": {
+    "message": "Hours"
+  },
+  "until": {
+    "message": "to"
+  },
+  "labelBuffer": {
+    "message": "Buffer"
+  },
+  "bufferOnsite": {
+    "message": "min, in person"
+  },
+  "minUnit": {
+    "message": "min"
+  },
+  "labelLead": {
+    "message": "Lead"
+  },
+  "leadSuffix": {
+    "message": "min from now"
+  },
+  "refreshButton": {
+    "message": "Refresh"
+  },
+  "insertButton": {
+    "message": "Insert"
+  },
+  "statusLoading": {
+    "message": "Loading calendar…"
+  },
+  "statusFreeWindows": {
+    "message": "$W$ free windows on $D$ days, $E$ events considered.",
+    "placeholders": {
+      "w": {
+        "content": "$1"
+      },
+      "d": {
+        "content": "$2"
+      },
+      "e": {
+        "content": "$3"
+      }
+    }
+  },
+  "statusInserting": {
+    "message": "Inserting…"
+  },
+  "statusCreating": {
+    "message": "Creating event…"
+  },
+  "errorPrefix": {
+    "message": "Error: $MSG$",
+    "placeholders": {
+      "msg": {
+        "content": "$1"
+      }
+    }
+  },
+  "errorInsert": {
+    "message": "Could not insert: $MSG$",
+    "placeholders": {
+      "msg": {
+        "content": "$1"
+      }
+    }
+  },
+  "errorNoCompose": {
+    "message": "No compose window found"
+  },
+  "errorNoAttendees": {
+    "message": "No attendees"
+  },
+  "errorNoCalendar": {
+    "message": "No calendar selected"
+  },
+  "errorNoTitle": {
+    "message": "Title missing"
+  },
+  "errorWhen": {
+    "message": "Date and time not understood"
+  },
+  "errorMyLink": {
+    "message": "Enter your video link under Settings first."
+  },
+  "errorTimeout": {
+    "message": "$WHAT$ is not responding ($S$ s)",
+    "placeholders": {
+      "what": {
+        "content": "$1"
+      },
+      "s": {
+        "content": "$2"
+      }
+    }
+  },
+  "whatCalendar": {
+    "message": "Calendar"
+  },
+  "whatCalendarList": {
+    "message": "Calendar list"
+  },
+  "freeSlotsNotLoaded": {
+    "message": "Free slots not loaded: $MSG$",
+    "placeholders": {
+      "msg": {
+        "content": "$1"
+      }
+    }
+  },
+  "whenNotUnderstood": {
+    "message": "Time not understood. Examples: 14 Sep 15:00 · 14.9. 15:00 · Tue 15:00 · tomorrow 10:30 · 2026-09-14 15:00"
+  },
+  "whenEmpty": {
+    "message": "Enter a date and time, or take a suggestion below."
+  },
+  "whenPast": {
+    "message": "(in the past)"
+  },
+  "threadInfo": {
+    "message": "$P$ people from $M$ messages in this thread",
+    "placeholders": {
+      "p": {
+        "content": "$1"
+      },
+      "m": {
+        "content": "$2"
+      }
+    }
+  },
+  "hintGoogleSends": {
+    "message": "Google creates the event as $ORG$ and sends the invitation.",
+    "placeholders": {
+      "org": {
+        "content": "$1"
+      }
+    }
+  },
+  "hintServerSends": {
+    "message": "The calendar server sends the invitation as $ORG$.",
+    "placeholders": {
+      "org": {
+        "content": "$1"
+      }
+    }
+  },
+  "hintThunderbirdSends": {
+    "message": "Thunderbird's event dialog opens; saving it sends the invitation from $ORG$.",
+    "placeholders": {
+      "org": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusGoogleOpened": {
+    "message": "Google Calendar opened: click \"Add Google Meet\" and Save there."
+  },
+  "statusDialogOpened": {
+    "message": "Event dialog opened."
+  },
+  "statusCreated": {
+    "message": "Invitation created in \"$CAL$\".",
+    "placeholders": {
+      "cal": {
+        "content": "$1"
+      }
+    }
+  },
+  "defaultTitle": {
+    "message": "Call"
+  }
 }

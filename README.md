@@ -28,7 +28,7 @@ Everything runs inside Thunderbird against the calendars Thunderbird already has
 ## Install
 
 - From [addons.thunderbird.net](https://addons.thunderbird.net/) once published, or
-- download the `.xpi` from the [releases](https://github.com/patrickbgrossmann/compose-calendar/releases) and install it via Add-ons Manager → gear icon → *Install Add-on From File…*
+- download the `.xpi` from the [releases](https://github.com/smisery-prrivate/compose-calendar/releases) and install it via Add-ons Manager → gear icon → *Install Add-on From File…*
 
 Requires Thunderbird 115 or newer with calendars set up (CalDAV, Google via CalDAV, local).
 

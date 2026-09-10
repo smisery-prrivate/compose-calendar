@@ -10,8 +10,8 @@ Everything below is ready to paste into the submission form at https://addons.th
 - **Categories:** Calendar and Date/Time; Message Composition
 - **Tags:** calendar, scheduling, availability, invitation, google meet, time zone, compose
 - **Support email:** grossmann@invitris.com (or the GitHub issues page)
-- **Homepage:** https://github.com/patrickbgrossmann/compose-calendar
-- **Support site:** https://github.com/patrickbgrossmann/compose-calendar/issues
+- **Homepage:** https://github.com/smisery-prrivate/compose-calendar
+- **Support site:** https://github.com/smisery-prrivate/compose-calendar/issues
 - **License:** MIT
 - **Privacy policy:** The add-on runs entirely inside Thunderbird against the calendars Thunderbird already has. It makes no network requests of its own and collects no data. The only external page it opens, and only when you ask for it, is your web calendar (Google Calendar by default) in a window next to the compose window.
 
