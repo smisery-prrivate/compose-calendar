@@ -21,6 +21,12 @@ One button, **Calendar**, in the toolbar of every compose window:
 **Web calendar beside the compose window**
 - "Open calendar beside" shrinks the compose window and opens your web calendar (Google Calendar by default, any URL configurable) docked to its right, so you can see your day while you type. Optionally automatic for every new message.
 
+## If this saves you time, cure a disease with it
+
+This add-on is free. If it earns you back an hour, please put a few euros toward FOP research instead. FOP (fibrodysplasia ossificans progressiva) is an ultra-rare disease that slowly turns muscle into bone. It is personal to me. Donations go to the IFOPA's 2026 In Pursuit of a Cure campaign:
+
+**https://ifopa.salsalabs.org/2026InPursuitofaCureWebsite/index.html**
+
 ## Privacy
 
 Everything runs inside Thunderbird against the calendars Thunderbird already has. The add-on makes no network requests of its own. The only external page it opens, and only when you ask for it, is your web calendar (Google Calendar by default) in a window next to the compose window.
