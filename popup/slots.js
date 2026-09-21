@@ -93,8 +93,8 @@
    * @returns {Array<{day: Date, windows: Array<{start: Date, end: Date}>}>}
    */
   function computeFreeSlots(events, opts) {
-    const workStart = parseHM(opts.workStart || "09:00");
-    const workEnd = parseHM(opts.workEnd || "17:00");
+    const workStart = parseHM(opts.workStart || "08:00");
+    const workEnd = parseHM(opts.workEnd || "18:00");
     const duration = opts.durationMin || 30;
     const buffer = opts.bufferMin ?? 15;
     const commute = opts.commuteBufferMin ?? 60;

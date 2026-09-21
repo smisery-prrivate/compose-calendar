@@ -26,7 +26,7 @@ const uiLang = (() => {
 
 const DEFAULTS = {
   duration: "30", range: "next5", lang: uiLang, tz: "LOCAL", alsoHome: false, intro: true,
-  workStart: "09:00", workEnd: "17:00", buffer: 15, commute: 60, lead: 60,
+  workStart: "08:00", workEnd: "18:00", buffer: 15, commute: 60, lead: 60,
   disabledCalendars: [],
   ivCalendar: "", ivDuration: "30", ivMyLink: "", ivNote: true, ivAddMe: false, ivReview: false,
   calendarUrl: "", autoCalendar: false,
